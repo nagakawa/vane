@@ -1,0 +1,3 @@
+[submodule "discordpp"]
+	path = discordpp
+	url = https://github.com/Aidoboy/discordpp
