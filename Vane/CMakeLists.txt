@@ -10,6 +10,7 @@ SET(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 SET(x801_executable_SRCS
   ${PROJECT_SOURCE_DIR}/main.cpp
   ${PROJECT_SOURCE_DIR}/commands.cpp
+  ${PROJECT_SOURCE_DIR}/ipa.cpp
 )
 
 include_directories(${PROJECT_BINARY_DIR})
