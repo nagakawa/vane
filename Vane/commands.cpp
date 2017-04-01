@@ -3,8 +3,8 @@
 #include <time.h>
 
 bool isAprilFools() {
-  time_t now = std::time(nullptr);
-  std::tm* nowTM = localtime(&now);
+  time_t now = time(nullptr);
+  tm* nowTM = localtime(&now);
   return nowTM->tm_mon == 3 && nowTM->tm_mday == 1;
 }
 
