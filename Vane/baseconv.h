@@ -32,3 +32,5 @@ struct BaseError {
 std::variant<BaseError, intmax_t> fromString(const char* s, int b);
 
 std::string toString(intmax_t x, int b);
+
+std::variant<BaseError, std::string> convertBase(const char* s, int bfrom, int bto);

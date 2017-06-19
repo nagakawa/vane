@@ -32,6 +32,7 @@ std::variant<BaseError, intmax_t> fromString(const char* s, int b) {
     if (x > INTMAX_MAX - d)
       return std::variant<BaseError, intmax_t>(BaseError::tooBig());
     x += d;
+    ++s;
   }
   if (isNegative) x = -x;
   return std::variant<BaseError, intmax_t>(x);
@@ -53,4 +54,13 @@ std::string toString(intmax_t x, int b) {
   if (isNegative) s += '-';
   std::reverse(s.begin(), s.end());
   return s;
+}
+
+std::variant<BaseError, std::string> convertBase(const char* s, int bfrom, int bto) {
+  auto iResult = fromString(s, bfrom);
+  if (std::holds_alternative<BaseError>(iResult))
+    return std::variant<BaseError, std::string>(std::get<BaseError>(iResult));
+  return std::variant<BaseError, std::string>(
+    toString(std::get<intmax_t>(iResult), bto)
+  );
 }
