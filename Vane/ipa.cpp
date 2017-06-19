@@ -163,7 +163,7 @@ std::string xsampaToIPA(const std::string& xs) {
         result += sym;
         ++j;
       } else {
-        return std::string("Error: unrecognised diacritic _") + c + ". So far I have /" + result + "/.";
+        return std::string("Error: unrecognised diacritic _") + d + ". So far I have /" + result + "/.";
       }
     } else if (c < 'A') {
       if (j < xs.length()) {

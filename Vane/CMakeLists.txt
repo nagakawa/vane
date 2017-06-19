@@ -7,16 +7,17 @@ INCLUDE(../dependencies.cmake)
 
 SET(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-SET(x801_executable_SRCS
+SET(Vane_executable_SRCS
   ${PROJECT_SOURCE_DIR}/main.cpp
   ${PROJECT_SOURCE_DIR}/commands.cpp
   ${PROJECT_SOURCE_DIR}/ipa.cpp
+  ${PROJECT_SOURCE_DIR}/baseconv.cpp
 )
 
 include_directories(${PROJECT_BINARY_DIR})
 include_directories(${PROJECT_INCLUDE_DIR})
 # actual target:
-ADD_EXECUTABLE(Vane ${x801_executable_SRCS})
+ADD_EXECUTABLE(Vane ${Vane_executable_SRCS})
 
 TARGET_LINK_LIBRARIES(Vane
   ${CMAKE_SOURCE_DIR}/build/libdiscordpp.so
@@ -26,7 +27,7 @@ TARGET_LINK_LIBRARIES(Vane
   ${Boost_LIBRARIES}
   curlpp curl pthread ssl crypto
   #${SQLITE_LIBRARIES}
-  #${LibreSSL_LIBRARIES}
+  ${OPENSSL_LIBRARIES}
   # ${CURL_LIBRARIES}
 )
 
