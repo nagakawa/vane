@@ -180,7 +180,15 @@ std::string xsampaToIPA(const std::string& xs) {
         }
       }
       if (retro) {
-        --j;
+        if (c == '@') result += u8"ɚ";
+        else {
+          --j;
+          retro = false;
+        }
+      }
+      if (retro) {
+        i = j;
+        continue;
       }
       if (!backslash) result += symbols[c - ' '];
       else {
