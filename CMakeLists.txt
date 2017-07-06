@@ -35,6 +35,10 @@ include_directories("${PROJECT_SOURCE_DIR}")
 
 ADD_SUBDIRECTORY(discordpp)
 
+# Aho-Corasick algo impl.
+
+#ADD_SUBDIRECTORY(aho_corasick)
+
 # Our own submodules
 
 ADD_SUBDIRECTORY(Vane)

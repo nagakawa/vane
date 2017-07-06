@@ -1,3 +1,6 @@
 [submodule "discordpp"]
 	path = discordpp
 	url = https://github.com/Aidoboy/discordpp
+[submodule "aho_corasick"]
+	path = aho_corasick
+	url = https://github.com/cjgdev/aho_corasick.git

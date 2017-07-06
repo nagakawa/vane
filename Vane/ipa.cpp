@@ -170,9 +170,9 @@ std::string xsampaToIPA(const std::string& xs) {
         bool shouldContinue = true;
         const char* t = xs.c_str() + j - 1;
         if (strncmp(t, "<F>", 3) == 0)
-          result += u8"↘";
+          result += u8"\\↘";
         else if (strncmp(t, "<R>", 3) == 0)
-          result += u8"↗";
+          result += u8"\\↗";
         else shouldContinue = false;
         if (shouldContinue) {
           i = j + 2;
