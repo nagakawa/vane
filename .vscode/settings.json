@@ -1,0 +1,24 @@
+{
+  "files.associations": {
+    "cctype": "cpp",
+    "cstddef": "cpp",
+    "cstdlib": "cpp",
+    "cstring": "cpp",
+    "cwchar": "cpp",
+    "cwctype": "cpp",
+    "clocale": "cpp",
+    "cstdarg": "cpp",
+    "cstdint": "cpp",
+    "cstdio": "cpp",
+    "ctime": "cpp",
+    "exception": "cpp",
+    "initializer_list": "cpp",
+    "new": "cpp",
+    "type_traits": "cpp",
+    "typeinfo": "cpp",
+    "algorithm": "cpp",
+    "cmath": "cpp",
+    "csignal": "cpp",
+    "*.ipp": "cpp"
+  }
+}

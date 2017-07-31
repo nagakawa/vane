@@ -1,7 +1,7 @@
 #include "commands.h"
 
 #include <time.h>
-
+/*
 bool isAprilFools() {
   time_t now = time(nullptr);
   tm* nowTM = localtime(&now);
@@ -58,3 +58,4 @@ std::unordered_map<std::string, std::function<void(discordpp::Bot*, nlohmann::js
   {"Who are you?", respondInfo},
   {"Please help me.", respondCommands},
 };
+*/

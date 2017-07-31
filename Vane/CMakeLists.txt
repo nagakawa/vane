@@ -22,12 +22,13 @@ include_directories(${PROJECT_INCLUDE_DIR})
 ADD_EXECUTABLE(Vane ${Vane_executable_SRCS})
 
 TARGET_LINK_LIBRARIES(Vane
-  ${CMAKE_SOURCE_DIR}/build/libdiscordpp.so
   #${CMAKE_SOURCE_DIR}/build/libcurlpp.so
   #${ZLIB_LIBRARIES}
   #${LIBPTHREAD_LIBRARIES}
   ${Boost_LIBRARIES}
-  curlpp curl pthread ssl crypto
+  #curlpp
+  /usr/local/lib/libcurlpp.so
+  curl pthread ssl crypto
   #${SQLITE_LIBRARIES}
   ${OPENSSL_LIBRARIES}
   # ${CURL_LIBRARIES}

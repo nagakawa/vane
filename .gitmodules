@@ -1,6 +1,12 @@
-[submodule "discordpp"]
-	path = discordpp
-	url = https://github.com/Aidoboy/discordpp
 [submodule "aho_corasick"]
 	path = aho_corasick
 	url = https://github.com/cjgdev/aho_corasick.git
+[submodule "discordpp"]
+	path = discordpp
+	url = https://github.com/DiscordPP/discordpp.git
+[submodule "rest-curlpp"]
+	path = rest-curlpp
+	url = https://github.com/DiscordPP/rest-curlpp.git
+[submodule "websocket-websocketpp"]
+	path = websocket-websocketpp
+	url = https://github.com/DiscordPP/websocket-websocketpp
