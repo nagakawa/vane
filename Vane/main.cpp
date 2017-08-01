@@ -15,6 +15,7 @@
 #include "commands.h"
 #include "filter.h"
 #include "ipa.h"
+#include "say.h"
 
 using aios_ptr = std::shared_ptr<boost::asio::io_service>;
 aios_ptr service;
@@ -27,14 +28,13 @@ std::string getToken() {
   return s;
 }
 
-#if 0
-bool respondWithFilter(nlohmann::json response) {
+bool respondWithFilter(discordpp::Bot* bot, nlohmann::json response) {
   static std::regex qslash("\\?/([^/]+)/");
-  std::string message = response["d"]["content"];
+  std::string message = response["content"];
   auto begin = std::sregex_iterator(message.begin(), message.end(), qslash);
   auto end = std::sregex_iterator();
   if (begin != end) {
-    std::string sid = response["d"]["channel_id"];
+    std::string sid = response["channel_id"];
     auto id = std::stoull(sid);
     for (auto i = begin; i != end; ++i) {
       std::smatch match = *i;
@@ -45,38 +45,38 @@ bool respondWithFilter(nlohmann::json response) {
       message += "` can";
       if (!allowed) message += "'t";
       message += " be said";
-      discordpp::DiscordAPI::channels::messages::create(id, message);
+      say(bot, id, message);
     }
     return true;
   }
   return false;
 }
 
-bool respondWithIPA(nlohmann::json response) {
+bool respondWithIPA(discordpp::Bot* bot, nlohmann::json response) {
   static std::regex xslash("x/([^/]+)/");
-  std::string message = response["d"]["content"];
+  std::string message = response["content"];
   auto begin = std::sregex_iterator(message.begin(), message.end(), xslash);
   auto end = std::sregex_iterator();
   if (begin != end) {
-    std::string sid = response["d"]["channel_id"];
+    std::string sid = response["channel_id"];
     auto id = std::stoull(sid);
     for (auto i = begin; i != end; ++i) {
       std::smatch match = *i;
       std::string matchString = match[1];
-      discordpp::DiscordAPI::channels::messages::create(id, xsampaToIPA(matchString));
+      say(bot, id, xsampaToIPA(matchString));
     }
     return true;
   }
   return false;
 }
 
-bool respondWithBaseConv(nlohmann::json response) {
+bool respondWithBaseConv(discordpp::Bot* bot, nlohmann::json response) {
   static std::regex bcregex(R"(BASECONV\[(\d+)>(\d+)\]\s*(\w+))");
-  std::string message = response["d"]["content"];
+  std::string message = response["content"];
   auto begin = std::sregex_iterator(message.begin(), message.end(), bcregex);
   auto end = std::sregex_iterator();
   if (begin != end) {
-    std::string sid = response["d"]["channel_id"];
+    std::string sid = response["channel_id"];
     auto id = std::stoull(sid);
     for (auto i = begin; i != end; ++i) {
       std::smatch match = *i;
@@ -86,7 +86,7 @@ bool respondWithBaseConv(nlohmann::json response) {
       // std::cerr << bfrom << ' ' << bto << ' ' << str << '\n';
       auto res = convertBase(str.c_str(), bfrom, bto);
       if (std::holds_alternative<std::string>(res)) {
-        discordpp::DiscordAPI::channels::messages::create(id, std::get<std::string>(res));
+        say(bot, id, std::get<std::string>(res));
       } else {
         auto be = std::get<BaseError>(res);
         std::string message;
@@ -109,7 +109,7 @@ bool respondWithBaseConv(nlohmann::json response) {
           message += std::to_string(be.code);
           message += ".";
         }
-        discordpp::DiscordAPI::channels::messages::create(id, message);
+        say(bot, id, message);
       }
     }
     return true;
@@ -118,18 +118,17 @@ bool respondWithBaseConv(nlohmann::json response) {
 }
 
 void respondToMessage(discordpp::Bot* bot, nlohmann::json response) {
-  (void) bot;
-  if (response["d"]["author"]["id"] == bot->me["id"]) return;
-  auto iterator = customCommands.find(response["d"]["content"]);
+  // std::cout << response.dump(4) << '\n';
+  if (response["author"]["id"] == bot->me_["id"]) return;
+  auto iterator = customCommands.find(response["content"]);
   if (iterator != customCommands.end()) {
     iterator->second(bot, response);
   } else {
-    respondWithIPA(response);
-    respondWithBaseConv(response);
-    respondWithFilter(response);
+    respondWithIPA(bot, response);
+    respondWithBaseConv(bot, response);
+    respondWithFilter(bot, response);
   }
 }
-#endif
 
 uint64_t getRedRoleID(discordpp::Bot* bot, uint64_t guildID) {
   uint64_t roleID = 0;
@@ -220,7 +219,6 @@ int main() {
   try {
     readFilterFiles();
     std::cout << "Starting bot...\n";
-    //bot.addResponse("MESSAGE_CREATE", respondToMessage);
     //bot.addResponse("PRESENCE_UPDATE", respondToJoin);
     //bot.addResponse("TYPING_START", respondToJoin);
     service = std::make_shared<boost::asio::io_service>();
@@ -232,6 +230,7 @@ int main() {
       std::make_shared<discordpp::WebsocketWebsocketPPModule>(service, token));
     bot.addHandler("READY", updateAllUserRedRole);
     bot.addHandler("GUILD_MEMBER_UPDATE", respondToUserUpdate);
+    bot.addHandler("MESSAGE_CREATE", respondToMessage);
     service->run();
     return 0;
   } catch (std::string s) {

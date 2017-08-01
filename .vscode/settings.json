@@ -19,6 +19,11 @@
     "algorithm": "cpp",
     "cmath": "cpp",
     "csignal": "cpp",
-    "*.ipp": "cpp"
+    "*.ipp": "cpp",
+    "array": "cpp",
+    "hash_map": "cpp",
+    "hash_set": "cpp",
+    "slist": "cpp",
+    "system_error": "cpp"
   }
 }

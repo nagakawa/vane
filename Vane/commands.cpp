@@ -1,7 +1,9 @@
 #include "commands.h"
 
 #include <time.h>
-/*
+
+#include "say.h"
+
 bool isAprilFools() {
   time_t now = time(nullptr);
   tm* nowTM = localtime(&now);
@@ -23,10 +25,10 @@ static std::string INFO_APRIL =
 
 void respondInfo(discordpp::Bot* bot, nlohmann::json response) {
   (void) bot;
-  std::string sid = response["d"]["channel_id"];
+  std::string sid = response["channel_id"];
   auto id = std::stoull(sid);
-  discordpp::DiscordAPI::channels::messages::create(
-    id,
+  say(
+    bot, id,
     isAprilFools() ? INFO_APRIL : INFO
   );
 }
@@ -47,15 +49,13 @@ std::string commandString() {
 static std::string cs;
 
 void respondCommands(discordpp::Bot* bot, nlohmann::json response) {
-  (void) bot;
-  std::string sid = response["d"]["channel_id"];
+  std::string sid = response["channel_id"];
   auto id = std::stoull(sid);
   if (cs.length() == 0) cs = commandString();
-  discordpp::DiscordAPI::channels::messages::create(id, cs);
+  say(bot, id, cs);
 }
 
 std::unordered_map<std::string, std::function<void(discordpp::Bot*, nlohmann::json)>> customCommands = {
   {"Who are you?", respondInfo},
   {"Please help me.", respondCommands},
 };
-*/

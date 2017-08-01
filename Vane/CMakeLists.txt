@@ -14,6 +14,7 @@ SET(Vane_executable_SRCS
   ${PROJECT_SOURCE_DIR}/baseconv.cpp
   ${PROJECT_SOURCE_DIR}/utf8.cpp
   ${PROJECT_SOURCE_DIR}/filter.cpp
+  ${PROJECT_SOURCE_DIR}/say.cpp
 )
 
 include_directories(${PROJECT_BINARY_DIR})
