@@ -76,7 +76,7 @@ void readFilterFiles() {
   for (const std::string& s : redlistMultiword) std::cout << s << " / ";
   std::cout << "\nExceptions:\n";
   for (const std::string& s : exceptions) std::cout << s << ' ';
-  std::cout << "Replacements:\n";
+  std::cout << "\nReplacements:\n";
   for (const auto& p : replacements) {
     std::cout << p.first << " → " << p.second << " / ";
   }

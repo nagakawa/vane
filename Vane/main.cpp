@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 #include <boost/asio.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <discordpp/bot.hh>
 #include <discordpp/rest-curlpp.hh>
 #include <discordpp/websocket-websocketpp.hh>
@@ -16,6 +17,7 @@
 #include "ipa.h"
 
 using aios_ptr = std::shared_ptr<boost::asio::io_service>;
+aios_ptr service;
 using Handler = std::function<void(discordpp::Bot*, nlohmann::json)>;
 
 std::string getToken() {
@@ -144,10 +146,31 @@ uint64_t getRedRoleID(discordpp::Bot* bot, uint64_t guildID) {
 }
 
 void setOrResetRedRole(discordpp::Bot* bot, uint64_t guildID, uint64_t userID, uint64_t roleID, bool allowed) {
-  if (allowed)
-    bot->call("/guilds/" + std::to_string(guildID) + "/members/" + std::to_string(userID) + "/roles/" + std::to_string(roleID), "a", "DELETE");
-  else
-    bot->call("/guilds/" + std::to_string(guildID) + "/members/" + std::to_string(userID) + "/roles/" + std::to_string(roleID), "a", "PUT");
+  try {
+    if (allowed)
+      bot->call("/guilds/" + std::to_string(guildID) + "/members/" + std::to_string(userID) + "/roles/" + std::to_string(roleID), {}, "DELETE");
+    else
+      bot->call("/guilds/" + std::to_string(guildID) + "/members/" + std::to_string(userID) + "/roles/" + std::to_string(roleID), "", "PUT");
+  } catch (discordpp::ratelimit& e) {
+    // Wait a bit and try again.
+    std::cout << "Waiting out rate limit for " << e.millis << " milliseconds.\n";
+    boost::asio::deadline_timer t(*service, boost::posix_time::milliseconds(e.millis));
+    t.async_wait([bot, guildID, userID, roleID, allowed](const boost::system::error_code&) {
+      setOrResetRedRole(bot, guildID, userID, roleID, allowed);
+    });
+  }
+}
+
+void setOrResetRedRoleIfNecessary(discordpp::Bot* bot, uint64_t guildID, uint64_t userID, uint64_t roleID, bool allowed, const nlohmann::json& rinfo) {
+  bool wasAllowed = true;
+  for (const auto& role : rinfo) {
+    auto id = std::stoull((std::string) role);
+    if (id == roleID) {
+      wasAllowed = false;
+      break;
+    }
+  }
+  if (wasAllowed != allowed) setOrResetRedRole(bot, guildID, userID, roleID, allowed);
 }
 
 std::string getNickOrName(const nlohmann::json& info) {
@@ -157,14 +180,14 @@ std::string getNickOrName(const nlohmann::json& info) {
 }
 
 void respondToUserUpdate(discordpp::Bot* bot, nlohmann::json response) {
-  auto guildID = std::stoull((std::string) response["d"]["guild_id"]);
-  std::string nick = getNickOrName(response["d"]);
+  auto guildID = std::stoull((std::string) response["guild_id"]);
+  std::string nick = getNickOrName(response);
   bool allowed = canSay(nick);
   //auto roles = discordpp::DiscordAPI::guilds::roles::get(guildID);
   uint64_t roleID = getRedRoleID(bot, guildID);
   if (roleID == 0) return;
-  auto userID = std::stoull((std::string) response["d"]["user"]["id"]);
-  setOrResetRedRole(bot, guildID, userID, roleID, allowed);
+  auto userID = std::stoull((std::string) response["user"]["id"]);
+  setOrResetRedRoleIfNecessary(bot, guildID, userID, roleID, allowed, response["roles"]);
   /*
   std::string sid = response["d"]["channel_id"];
   auto id = std::stoull(sid);
@@ -181,11 +204,11 @@ void updateAllUserRedRole(discordpp::Bot* bot, nlohmann::json response) {
   if (roleID == 0) return;
   bot->call("/guilds/" + std::to_string(guildID) + "/members?limit=1000", {}, "GET",
     [guildID, roleID](discordpp::Bot* bot, nlohmann::json users) {
-      for (auto user : users) {
+      for (const auto& user : users) {
         auto userID = std::stoull((std::string) user["user"]["id"]);
         std::string nick = getNickOrName(user);
         bool allowed = canSay(nick);
-        setOrResetRedRole(bot, guildID, userID, roleID, allowed);
+        setOrResetRedRoleIfNecessary(bot, guildID, userID, roleID, allowed, user["roles"]);
         std::cout << nick << ": ";
         std::cout << (allowed ? "allowed" : "not allowed") << '\n';
       }
@@ -200,7 +223,7 @@ int main() {
     //bot.addResponse("MESSAGE_CREATE", respondToMessage);
     //bot.addResponse("PRESENCE_UPDATE", respondToJoin);
     //bot.addResponse("TYPING_START", respondToJoin);
-    auto service = std::make_shared<boost::asio::io_service>();
+    service = std::make_shared<boost::asio::io_service>();
     std::string token = getToken();
     discordpp::Bot bot(
       service,
