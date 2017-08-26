@@ -24,6 +24,9 @@
     "hash_map": "cpp",
     "hash_set": "cpp",
     "slist": "cpp",
-    "system_error": "cpp"
+    "system_error": "cpp",
+    "string_view": "cpp",
+    "*.tcc": "cpp",
+    "iostream": "cpp"
   }
 }

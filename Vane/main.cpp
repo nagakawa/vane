@@ -120,14 +120,22 @@ bool respondWithBaseConv(discordpp::Bot* bot, nlohmann::json response) {
 void respondToMessage(discordpp::Bot* bot, nlohmann::json response) {
   // std::cout << response.dump(4) << '\n';
   if (response["author"]["id"] == bot->me_["id"]) return;
-  auto iterator = customCommands.find(response["content"]);
-  if (iterator != customCommands.end()) {
-    iterator->second(bot, response);
-  } else {
-    respondWithIPA(bot, response);
-    respondWithBaseConv(bot, response);
-    respondWithFilter(bot, response);
+  std::string message = response["content"];
+  message = trimWhitespace(message);
+  if (message[0] == '&') {
+    size_t nextSpace = message.find_first_of(" \t\r\n", 1);
+    std::string cmdname = message.substr(1, nextSpace - 1);
+    auto iterator = customCommands.find(cmdname);
+    if (iterator != customCommands.end()) {
+      iterator->second(
+        bot, response,
+        trimWhitespace(message.substr(nextSpace + 1))
+      );
+    }
   }
+  respondWithIPA(bot, response);
+  respondWithBaseConv(bot, response);
+  respondWithFilter(bot, response);
 }
 
 uint64_t getRedRoleID(discordpp::Bot* bot, uint64_t guildID) {
