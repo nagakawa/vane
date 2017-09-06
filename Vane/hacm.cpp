@@ -33,9 +33,9 @@ std::string latinToHacm(const std::string &l) {
   size_t len = l.length();
   while (i < len) {
     char c = l[i];
-    if (c == '\\') {
+    if (c == '\\' && i != len - 1) {
       s += l[++i];
-    } else if (c == '^') {
+    } else if (c == '^' && i != len - 1) {
       char d = l[++i];
       if (islower(d)) {
         s += lowercaseHacmSuper[d - 'a'];
