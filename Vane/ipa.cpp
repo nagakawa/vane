@@ -158,7 +158,7 @@ std::string xsampaToIPA(const std::string& xs) {
       if (d == '\0') {
         return "Error: Lone underscore at end of string. So far I have /" + result + "/.";
       }
-      const char* sym = udia[d - '"'];
+      const char* sym = udia[d - 0x22];
       if (sym[0] != '\0') {
         result += sym;
         ++j;
@@ -230,7 +230,7 @@ std::string xsampaToIPA(const std::string& xs) {
       return std::string("Error: unrecognised symbol ") + c + ". So far I have /" + result + "/.";
     }
     i = j;
-    std::cout << result << '\n';
+    // std::cout << result << '\n';
   }
   return result;
 }

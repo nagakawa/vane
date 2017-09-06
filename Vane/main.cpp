@@ -14,6 +14,7 @@
 #include "baseconv.h"
 #include "commands.h"
 #include "filter.h"
+#include "hacm.h"
 #include "ipa.h"
 #include "say.h"
 
@@ -46,6 +47,24 @@ bool respondWithFilter(discordpp::Bot* bot, nlohmann::json response) {
       if (!allowed) message += "'t";
       message += " be said";
       say(bot, id, message);
+    }
+    return true;
+  }
+  return false;
+}
+
+bool respondWithHacm(discordpp::Bot* bot, nlohmann::json response) {
+  static std::regex hslash("h/([^/]+)/");
+  std::string message = response["content"];
+  auto begin = std::sregex_iterator(message.begin(), message.end(), hslash);
+  auto end = std::sregex_iterator();
+  if (begin != end) {
+    std::string sid = response["channel_id"];
+    auto id = std::stoull(sid);
+    for (auto i = begin; i != end; ++i) {
+      std::smatch match = *i;
+      std::string matchString = match[1];
+      say(bot, id, latinToHacm(matchString));
     }
     return true;
   }
@@ -134,6 +153,7 @@ void respondToMessage(discordpp::Bot* bot, nlohmann::json response) {
     }
   }
   respondWithIPA(bot, response);
+  respondWithHacm(bot, response);
   respondWithBaseConv(bot, response);
   respondWithFilter(bot, response);
 }
