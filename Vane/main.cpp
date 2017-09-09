@@ -64,7 +64,7 @@ bool respondWithHacm(discordpp::Bot* bot, nlohmann::json response) {
     for (auto i = begin; i != end; ++i) {
       std::smatch match = *i;
       std::string matchString = match[1];
-      say(bot, id, latinToHacm(matchString));
+      say(bot, id, "`" + latinToHacm(matchString) + "`");
     }
     return true;
   }

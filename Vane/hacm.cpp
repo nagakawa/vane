@@ -24,7 +24,7 @@ static const char* lowercaseHacmSuper[] = {
 
 static const char* hacmDigits[] = {
   "0", "1", "⅃", "ʔ", "Ƣ",
-  "4", "ʕ", "9", "Δ", "L"
+  "P", "ʕ", "9", "Δ", "L"
 };
 
 std::string latinToHacm(const std::string &l) {
