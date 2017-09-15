@@ -23,6 +23,25 @@ static std::string INFO_APRIL =
   "lolololol HAHA Me iz progRAMMed in SEE PLUS PLUS!!! OMG kan u believes it???\n"
   "kthxbye"
   ;
+static std::string KH =
+  "ridia! ridia! ridia! ridiaaaaaaaaaaaaaaaaaaaaaaaaaannnnnnnnn!!!!!!!!!!\n"
+  "aaaaaaaaa.......aaaa. aa...aaaggg!! ridia, ridia, ridiaaaaaaaaaaaaaaaaannnnnnnnnn!!!!!!!\n"
+  "aaaaa, kuh kuh! kuuh kuuh!! suh suh! suuh suuh!! aca ti et liito aa... son son.\n"
+  "ahaaa! an toan lax nia leje e ridia lutia liij fo kuuh kuuh aaa!!! kuuh kuuh! aaa!!!!\n"
+  "teo! an oj lax nia laat fo muf muf! mof mof, muuf muuf! nia, nia! muf muf! kyan kyan kyun!\n"
+  "ridia liij kaen ardia keno xelt e milf at ank tinka dac! aaaaaaa...aaaa...ap, aaaaaa! oooouuuuuuuugggg!\n"
+  "an na nau on ti sil nok a slax 5 t'avelantis, ridia liij! aaaaaa! ank, ank e! ridia liij! ank!!! ap, aaaaaa!!!\n"
+  "vei kalfia as at atm ento an na nau ati va--- teeeeeeeeeeeeeeeeeeee! teoooooooooooo!!! aaaaaaaaaaaaaarteeeeeeeeee!!!\n"
+  "haaaaaaaaaaaaaaaaaaaaaaizeeeeeeeeeeeeennnn! kalfia tis de fiana daaaaaaaaaa!!!!!! ap, an xaklik yul avelantis tan et........\n"
+  "RIDIA LIIJ et en fiana??????????????? teeeoooooooooooooooooo!!!!!! aaaaaaaaaaaaaaaaa!!!!!!\n"
+  "aaarteeeeeeeeeeeee! kleeeeeeeeeeeeeeveeeeeeeeeeeeeeeelllllll! aaaaaaaaaaaaaaaaaaannnn! aaaaaaaaarbazaaaaaaaaaaard!!!!\n"
+  "ocaaaaaaa! beo daaaaaa!!!!!! an leev! an leev van tuube fia tis-- to?? lu inor...? ridia liiz kaen olmaleis inor an xa!!!\n"
+  "ridia liiz kaen avelantis xookor a men da!!!! atta... tu fia des ges xa!! (xante\n"
+  "hwaaaaaaaaaaaaaaaa!!!!! an til ridia liiz!!!!! atta al an, mel! men so sen xed netal eu!\n"
+  "ou, ridia liiz kaen kalfiaaaaaaaaaaaaaaa! teooooooooooooooooooooooooo!\n"
+  "aaaaaaaa, aaaaaaag, ap, ap, liiza xanxaaaaaaaa! k...kmiiiiiiiirrrr! luxiaaaaaaaaaaaa!!!!!! miliaaaaaaaaa!!!!!!\n"
+  "u....uuuuuuuuuuuuooooooooooooo!!!!!!! der xiilas leyute fiina ti, ridia. alem ant, ti re luko sil ridia kaen arbazard!\n"
+  ;
 
 void respondInfo(discordpp::Bot* bot, nlohmann::json response, const std::string& /*ignored*/) {
   (void) bot;
@@ -57,9 +76,26 @@ void respondCommands(discordpp::Bot* bot, nlohmann::json response, const std::st
   say(bot, id, cs);
 }
 
+void respondKH(discordpp::Bot* bot, nlohmann::json response, const std::string& /*ignored*/) {
+  std::string sid = response["channel_id"];
+  auto id = std::stoull(sid);
+  say(bot, id, KH);
+}
+
+void respondADict(discordpp::Bot* bot, nlohmann::json response, const std::string& word) {
+  std::string sid = response["channel_id"];
+  auto id = std::stoull(sid);
+  std::string url = "http://mindsc.ape.jp/klel/yui.cgi?rein=";
+  url += word;
+  url += "&ziko=ilm&axn=axnyui&ism=ismyui";
+  say(bot, id, url);
+}
+
 std::unordered_map<std::string, std::function<void(discordpp::Bot*, nlohmann::json, const std::string&)>> customCommands = {
   {"about", respondInfo},
   {"help", respondCommands},
+  {"kh", respondKH},
+  {"adict", respondADict},
 };
 
 std::string trimWhitespace(const std::string& s) {
