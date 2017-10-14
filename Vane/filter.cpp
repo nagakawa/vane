@@ -22,6 +22,7 @@ void readFilterFiles() {
   while (std::getline(f1, s)) {
     while (s.length() != 0 && s[s.length() - 1] == '\r')
       s.pop_back();
+    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
     // patterns like "-aa-" mean that anything with "aa" in it
     // but not in exceptions is red
     if (s[0] == '-' && s[s.length() - 1] == '-') {
